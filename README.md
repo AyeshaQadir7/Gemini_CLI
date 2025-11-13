@@ -1,212 +1,210 @@
-# Gemini CLI Complete Guide
+# Gemini CLI - Complete Guide
+
+**Gemini CLI** is an open-source powerful, developer-friendly **command-line interface** designed to help you **build, deploy, and manage modern web applications** with speed and simplicity directly into your terminal.For example, you can ask Gemini CLI to generate or explain code, fix bugs, write tests, or automate tasks – all from the command line.
 
 
-**Gemini CLI** is a powerful, developer-friendly **command-line interface** designed to help you **build, deploy, and manage modern web applications** with speed and simplicity. Whether you're a solo developer or part of a large engineering team, Gemini CLI streamlines your workflow — from project creation to production deployment — in just a few commands.
-
----
-
-## Overview
-
-Gemini CLI is built for **efficiency, flexibility, and automation**. It eliminates repetitive setup steps and unifies your build and deploy workflows across environments.
-
-### Key Features
+## Key Features
 
 - **Zero-config project initialization** — spin up a new app in seconds.  
 - **Unified build & deploy pipeline** — consistent results locally and in CI/CD.  
-- **Plugin system** — extend functionality with custom integrations.   
+- **Plugin system** — extend functionality with custom integrations.  
+- **Environment management** — handle `.env` files and secrets with ease.  
 - **Cross-platform support** — works on macOS, Linux, and Windows.
+- **Developer-centric design** — every command is built around real developer workflows, with intuitive defaults and smart error handling.
 
-What makes Gemini CLI unique:
-> 🔧 **Developer-centric design** — every command is built around real developer workflows, with intuitive defaults and smart error handling.
+- **Native Gemini integration**: Connects to Gemini 2.5 Pro (with up to 1M token context) for powerful code understanding and generation.
+- **Built-in tools**: Includes web search, file I/O, shell commands, and more to ground responses with real data.
+- **Multimodal app generation**: Can create new apps from text descriptions, PDFs, images or sketches.
+- **Extensibility**: Supports Model Context Protocol (MCP) for custom tools and media generation (e.g. Imagen).
+- **Terminal-first and open-source**: Designed for developers who live in the CLI, and released under Apache 2.0.
 
----
+Compared to traditional CLIs, Gemini CLI uses a **conversational REPL interface**. You interact with it by typing questions or commands (e.g. “Create a web server”) rather than memorizing dozens of subcommands.
 
 ## Installation & Setup
 
-Before installing, ensure the following prerequisites are met:
-
 ### Prerequisites
+You’ll need **Node.js (version 20 or higher)**
+#### Check Node.js version: 
+```node -v```
 
-- **Node.js version** `>= 20 or higher`
-- **npm** or **yarn**
+If below 20, download from nodejs.org.
+
+### Installation Methods
+
+1. **Standard install (npm)**  
+   ```bash
+   npm install -g @google/gemini-cli
+   ```
+   This installs the `gemini` command globally.
+
+2. **Run without install (npx)**  
+   ```bash
+   npx @google/gemini-cli
+   ```
+   This runs the latest CLI without installing it permanently.
+
+3. **Homebrew (macOS/Linux)**  
+   ```bash
+   brew install gemini-cli
+   ```
+   (Available on Homebrew for quick setup.)
 
 
-### Installation
-
-#### macOS / Linux
-
-
-### Using npm
-```bash
-npm install -g @gemini/cli
-```
-
-### Using yarn
-```bash
-yarn global add @gemini/cli
-```
-
-#### Windows (PowerShell)
-
-```bash
-npm install -g @gemini/cli
-```
-
-Verify installation:
-
+#### After installation, verify by running:
 ```bash
 gemini --version
 ```
 
-Expected output:
+## Getting Started / Quick Start Guide
 
-```
-Gemini CLI v1.0.0
-```
-
----
-
-## Getting Started
-
-Create your first project with Gemini in seconds.
-
-### Start Gemini CLI:
-
-```
+To start a Gemini session:
+```bash
 gemini
 ```
 
+The CLI will launch an interactive REPL. On first run it will prompt you to authenticate (e.g. “Login with Google” or “Use Gemini API key”) and follow the instructions.
+
+Once authenticated, you can ask questions or give commands. Example:
+```bash
+gemini "Generate a simple Express.js app with a /hello endpoint"
+```
+
+Gemini CLI will ask for permission before modifying files:
+```
+Gemini: Would you like to create the file server.js? (yes/no)
+```
+Select `yes` to allow.
+
+### Sample Session
+```bash
+$ gemini
+🔍 Gemini CLI  > Hello! What would you like me to do?
+
+> "Create a Node.js API server with an endpoint /status"
+Gemini: I will create `index.js`. Proceed? (yes/no)
+> yes
+Gemini: (writes files)
+Gemini: Done. What next?
+```
+
+After files are generated, run normal project commands (`npm install`, `npm start`, etc.).
+
+You can continue iterating:
+```bash
+gemini "Add user authentication to this Express app"
+```
+
+Save/resume sessions:
+```bash
+gemini /chat save myTest
+gemini /chat resume myTest
+```
+
+Get help:
+```bash
+gemini /help
+```
 
 ## Understanding the Interface
 
-Gemini CLI follows a **modular command structure** for clarity and extensibility.
+Gemini CLI runs as an **interactive terminal REPL**. You type requests or prompts in plain English, and Gemini replies or performs actions.
 
-### Command Structure
+### Special Commands & Shortcuts
 
-```
-gemini <command> [options]
-```
+- **Slash commands (`/`)**:
+  - `/clear` – Clears the terminal display
+  - `/stats` – Shows session statistics (token usage, time)
+  - `/memory add <text>` – Adds info to Gemini’s memory context
+  - `/restore` – Revert project files to a previous state
+  - `/help` – Display help
+  - `/tools` – List available built-in tools
+  - `/quit` – Quit the program 
 
-### Core Commands
+- **Shell passthrough (`!`)** – Run local shell commands:
+  ```bash
+  !ls -la
+  !npm test
+  ```
 
-| Command  | Subcommands / Options           | Description                                      |
-| -------- | ------------------------------- | ------------------------------------------------ |
-| `create` | `--template <name>`             | Scaffold a new app from a template               |
-| `build`  | `--prod`, `--watch`             | Build your project for production or development |
-| `deploy` | `--env <name>`, `--token <key>` | Deploy to a specific environment                 |
-| `config` | `--set`, `--get`, `--list`      | Manage configuration values                      |
+- **File reference (`@`)** – Include file contents in prompt:
+  ```
+  @package.json Explain what this project does
+  ```
+
+- **Keyboard shortcuts**: `Ctrl+L` clears the screen (same as `/clear`)
+
+Gemini CLI is **prompt-driven** — no need to memorize subcommands like `gemini create`.
 
 Example:
-
 ```bash
-gemini deploy --env staging
+gemini "Initialize a new React web app with user login functionality"
 ```
 
----
+## Practical Example: Building a Web App
 
-## 🛠️ Practical Example: Building a Web App
-
-Let’s walk through building and deploying a simple React app with Gemini CLI.
-
-### 1. Create the Project
-
-```bash
-gemini create my-react-app --template react
-```
-
-### 2. Configure Environment
-
-```bash
-cd my-react-app
-gemini config set API_URL=https://api.example.com
-```
-
-### 3. Build the App
-
-```bash
-gemini build --prod
-```
-
-You’ll see:
-
-```
-✓ Optimized assets
-✓ Built for production
-✓ Output: dist/
-```
-
-### 4. Deploy to Production
-
-```bash
-gemini deploy --env production
-```
-
-Expected output:
-
-```
-Deploying to production...
-✓ Deployment complete!
-App available at: https://my-react-app.gemini.cloud
-```
-
-### Troubleshooting
-
-* **Build fails**: Ensure Node.js version ≥ 18 and dependencies are installed.
-* **Deployment errors**: Verify your API token using `gemini config --list`.
-* **Environment issues**: Run `gemini env sync` to refresh environment variables.
-
----
-
-## 💡 Tips & Best Practices
-
-* **Use `.env.local`** for local overrides without committing sensitive data.
-* **Automate builds** via CI pipelines using `gemini build --ci`.
-* **Use templates** to speed up repetitive project setups:
-
-  ```bash
-  gemini create my-app --template vue
-  ```
-* **Stay updated**:
-
-  ```bash
-  npm update -g @gemini/cli
-  ```
-
----
-
-## 🤝 Contributing
-
-Contributions are always welcome! 💬
-
-1. Fork the repository.
-2. Create your feature branch:
-
+1. **Initialize a project directory**
    ```bash
-   git checkout -b feature/my-feature
+   mkdir myapp && cd myapp
+   npm init -y
    ```
-3. Commit your changes:
 
+2. **Generate the app structure**
    ```bash
-   git commit -m "Add new feature"
+   gemini "Generate a simple Express.js web server with a GET /status endpoint"
    ```
-4. Push and open a pull request.
+   Confirm file creation → creates `index.js`
 
-Report bugs or request features through the [Issues](https://github.com/gemini/cli/issues) page.
+3. **Install dependencies and run**
+   ```bash
+   npm install express
+   node index.js
+   ```
+   Visit `http://localhost:3000/status`
 
----
+4. **Add features interactively**
+   ```bash
+   gemini "Add a POST /login route that checks username/password"
+   ```
 
-## 📜 License
+5. **Write unit tests**
+   ```bash
+   gemini "Write unit tests for Login.js"
+   ```
 
-This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
+6. **Troubleshoot errors**
+   ```bash
+   gemini "Fix the ‘module not found’ error by installing any missing packages"
+   ```
 
----
+7. **Deployment hints (CI/CD)**
+   ```bash
+   gemini "Generate a Dockerfile for this Node.js app"
+   ```
+   ```bash
+   gemini "Initialize a git repository and make the first commit"
+   ```
 
-## 🌐 Credits
+To exit: `/quit` or `Ctrl+C`
 
-Gemini CLI is developed and maintained by the **Gemini Open Source Team**.
-Special thanks to all community contributors for making Gemini better every day.
+## Tips & Best Practices
 
-> “Build fast. Deploy smarter. Manage effortlessly.” — *Gemini CLI Team*
+- Always review changes before confirming file edits
+- Use `--sandbox` mode for extra safety (runs tools in Docker)
+- Install latest (`@latest`), preview (`@preview`), or nightly (`@nightly`) via npm
+- Create a `GEMINI.md` file in your project for persistent context
+- Use `/memory add <text>` to give Gemini domain-specific info
+- Monitor usage with `/stats`
+- Revert mistakes with `/restore`
+- For CI/headless: set `GEMINI_API_KEY` environment variable
+- Keep updated — new features/fixes released weekly
 
-```
-```
+
+
+### Links
+
+- Documentation: https://docs.cloud.google.com/gemini/docs/codeassist/gemini-cli
+- GitHub: https://github.com/google-gemini/gemini-cli
+- Official site: https://geminicli.com
+- Authentication: https://geminicli.com/docs/get-started/authentication/
+- Examples: https://geminicli.com/docs/get-started/examples/
+- CLI Commands: https://geminicli.com/docs/cli/commands/
